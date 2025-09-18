@@ -5,6 +5,7 @@ project:
 website:
   title: "Amigate con R"
   navbar:
+    background: primary
     right:
       - about.qmd
       - icon: github

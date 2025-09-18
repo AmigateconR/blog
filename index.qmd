@@ -1,5 +1,8 @@
 ---
 title: "Amigate con R"
+format:
+  html:
+    css: styles_home.css
 listing:
   contents: posts
   sort: "date desc"

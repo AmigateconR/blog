@@ -1,0 +1,21 @@
+/* css styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
+
+/* Quitar titulo tipo texto */
+.quarto-title > h1.title {
+  opacity: 0 !important;
+}
+
+/* Acomodar imagen de Amigate con R en el banner */
+.quarto-title-block .quarto-title-banner {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: auto;
+}
+
+/* Fondo blanco solo para el bloque del título */
+.quarto-title-block .quarto-title-banner {
+  background-color: white !important;
+}
