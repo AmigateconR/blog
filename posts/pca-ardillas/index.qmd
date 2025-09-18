@@ -1,0 +1,131 @@
+---
+title: "Análisis de PCA en ardillas"
+author: "Martín Fioramonti"
+date: "2025-09-16"
+categories: [Paper]
+image: "thumbnail.jpg"
+---
+
+En este trabajo, [Pfaff y colegas (2015)](https://royalsocietypublishing.org/doi/10.1098/rspb.2015.0744) estudiaron la morfometría del laberinto óseo del oído interno en roedores del clado relacionado con las ardillas, junto con algunos grupos comparativos como murciélagos y marsupiales planeadores. Usando microtomografía computada, midieron distintos parámetros de los canales semicirculares y analizaron cómo estas estructuras se relacionan con los modos de locomoción: arborícolas, fosoriales, planeadores o voladores. Los resultados muestran que el diámetro de los canales semicirculares es un factor clave para diferenciar adaptaciones locomotoras, con mayor sensibilidad en especies fosoriales y menor en especies voladoras y planeadoras.
+
+Utilizando los datos proporcionados en el [material suplementario](https://royalsocietypublishing.org/doi/suppl/10.1098/rspb.2015.0744), intentamos replicar el análisis de componentes principales (PCA) que los autores presentan en la Figura 2 del artículo. Allí se representa el “morphospace” del laberinto óseo, mostrando cómo las especies de distintos hábitos locomotores se agrupan o se solapan según sus medidas anatómicas. A continuación compartimos el código en R que permite realizar un PCA con los datos del suplemento del paper.
+
+``` r
+# Author: Amigate con R
+
+# Carga de librerías ----
+
+library(tidyverse)
+library(readxl)
+library(FactoMineR)
+library(factoextra)
+library(ggrepel)
+library(ggh4x)
+
+# Funciones auxiliares ----
+
+abreviar_nombre <- function(x) {
+  x %>%
+    str_remove("\\s*\\([^\\)]+\\)") %>%              # quita lo que está entre paréntesis
+    str_split("\\s+") %>%                            # separa en palabras
+    map_chr(~ paste(substr(.x, 1, 2), collapse = " ")) # toma las 2 primeras letras 
+}
+
+# Carga y transformación de datos ----
+
+data_ASC <- read_excel("data/rspb20150744supp1.xls", sheet = "ASC") %>% 
+  select(Taxa,BS,log_ASCh_CBL,log_ASCw_CBL,log_ASCl_oCc_CBL,log_ASCd_CBL)
+
+data_PSC <- read_excel("data/rspb20150744supp1.xls", sheet = "PSC") %>% 
+  select(log_PSCh_CBL,log_PSCw_CBL,log_PSCl_oCc_CBL,log_PSCd_CBL)
+
+data_LSC <- read_excel("data/rspb20150744supp1.xls", sheet = "LSC") %>% 
+  select(log_LSCh_CBL,log_LSCw_CBL,log_LSCl_osCc_CBL,log_LSCd_CBL,LCc_CBL)
+
+data_final <- bind_cols(data_ASC,data_PSC,data_LSC) %>% 
+  mutate(taxa_abrev = abreviar_nombre(Taxa), .after = Taxa) %>% 
+  mutate(BS = c(rep("Fossorial", 16), rep("Arboreal", 21), rep("Gliding", 6),
+                rep("Flying", 3), rep("Gliding", 1), rep("Glirids", 3))
+         ) %>% 
+  rename(grupo_func = "BS") %>% 
+  mutate(loc_type = c(rep("A",16),rep("B",3),rep("A",6),rep("B",18),
+                      rep("A",3),"B",rep("A",3)),
+         .after = grupo_func)
+
+rm(data_ASC, data_PSC, data_LSC)
+
+# Análisis de componentes principales ----
+
+## Generación del PCA ----
+
+res.pca <- PCA(data_final, # dataframe a partir de la cual se genera el PCA
+               quali.sup = 1:4, # variables cualitativas de interés
+               scale.unit = T, # se utiliza matriz de correlación
+               graph = F, # no graficar
+               ncp = 2) # cantidad de componentes principales a mantener
+
+## Generación del gráfico ----
+
+### Puntos representativos de los individuos
+
+pca_ind <- res.pca$ind$coord %>%
+  as.data.frame() %>% 
+  rownames_to_column("obs") %>%
+  bind_cols(data_final) %>%
+  select(1:7)
+
+### Coordenadas de las variables originales 
+
+pca_var <- res.pca$var$coord %>%
+  as.data.frame() %>%
+  rownames_to_column("variable")
+
+### Polígonos
+
+pca_pol <- pca_ind %>%
+  group_by(grupo_func, loc_type) %>%
+  slice(chull(Dim.1, Dim.2))
+
+### Gráfico final
+
+colores <- c("Arboreal"  = "#0d6d37", "Flying"    = "#5760ac", "Fossorial" = "#92812f",
+             "Gliding"   = "#faa919", "Glirids"   = "#221f1f")
+
+ggplot(mapping = aes(x = Dim.2, y = Dim.1)) +
+  geom_polygon(data= pca_pol,
+               aes(fill = grupo_func,
+                   color = grupo_func,
+                   linetype = loc_type),
+               linewidth = 1.1,
+               alpha = 0.5) +
+  geom_point(data = pca_ind,
+             aes(shape = grupo_func, color = grupo_func),
+             size = 3,
+             stroke = 1.5) +
+  geom_text_repel(data = pca_ind,
+                  aes(label = taxa_abrev),
+                  max.overlaps = Inf) +
+  # Inicio de capa theme
+  theme(axis.line = element_line()) +
+  coord_axes_inside(labels_inside = T) + 
+  labs(x = paste0("PC2 (", round(res.pca$eig[2, 2], 2) , "%)"),
+       y = paste0("PC1 (", round(res.pca$eig[1, 2], 2) , "%)")) +
+  scale_fill_manual(values = colores) +
+  scale_color_manual(values = colores) +
+  scale_shape_manual(values = c(
+    "Arboreal"  = 8, # asterisco
+    "Flying"    = 17, # triángulo
+    "Fossorial" = 15,  # cuadrado
+    "Gliding"   = 1, # circulo vacio
+    "Glirids"   = 16  # círculo relleno
+  )) +
+  scale_linetype_manual(values = c("solid", "dashed"))
+```
+
+## Resultado
+
+![Gráfico PCA generado a partir de los datos del paper](grafico_final.png){fig-align="center"}
+
+Si te interesó el post, compartilo!
+
+*Martín*

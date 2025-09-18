@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Amigate con R",
     "section": "",
-    "text": "Análisis de PCA en ardillas\n\n\n\n\n\n\nPaper\n\n\n\n\n\n\n\n\n\nSep 16, 2025\n\n\nMartín Fioramonti\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nSep 13, 2025\n\n\nHarlow Malloc\n\n\n\n\n\n\nNo matching items"
+    "text": "Análisis de PCA en ardillas\n\n\n\n\n\n\nPaper\n\n\n\n\n\n\n\n\n\nSep 16, 2025\n\n\nMartín Fioramonti\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/post-with-code/index.html",
@@ -26,5 +26,19 @@
     "title": "Análisis de PCA en ardillas",
     "section": "",
     "text": "Código para correr el PCA\n# Este código no se ejecuta nunca\n\nlibrary(tidyverse)\nlibrary(factoextra)\n\nprint(\"Hola ver2\")\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "posts/pca-ardillas/index.html",
+    "href": "posts/pca-ardillas/index.html",
+    "title": "Análisis de PCA en ardillas",
+    "section": "",
+    "text": "En este trabajo, Pfaff y colegas (2015) estudiaron la morfometría del laberinto óseo del oído interno en roedores del clado relacionado con las ardillas, junto con algunos grupos comparativos como murciélagos y marsupiales planeadores. Usando microtomografía computada, midieron distintos parámetros de los canales semicirculares y analizaron cómo estas estructuras se relacionan con los modos de locomoción: arborícolas, fosoriales, planeadores o voladores. Los resultados muestran que el diámetro de los canales semicirculares es un factor clave para diferenciar adaptaciones locomotoras, con mayor sensibilidad en especies fosoriales y menor en especies voladoras y planeadoras.\nUtilizando los datos proporcionados en el material suplementario, intentamos replicar el análisis de componentes principales (PCA) que los autores presentan en la Figura 2 del artículo. Allí se representa el “morphospace” del laberinto óseo, mostrando cómo las especies de distintos hábitos locomotores se agrupan o se solapan según sus medidas anatómicas. A continuación compartimos el código en R que permite realizar un PCA con los datos del suplemento del paper."
+  },
+  {
+    "objectID": "posts/pca-ardillas/index.html#resultado",
+    "href": "posts/pca-ardillas/index.html#resultado",
+    "title": "Análisis de PCA en ardillas",
+    "section": "Resultado",
+    "text": "Resultado\n\n\n\nGráfico PCA generado a partir de los datos del paper\n\n\nSi te interesó el post, compartilo!\nMartín"
   }
 ]
