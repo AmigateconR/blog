@@ -1,9 +1,7 @@
 /* css styles */
 
-/* Importar la fuente desde Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
 
-/* Aplicar la fuente al body o a lo que quieras */
 body {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', Arial, sans-serif;
 }
