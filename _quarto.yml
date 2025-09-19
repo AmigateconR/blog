@@ -4,6 +4,7 @@ project:
 
 website:
   title: "Amigate con R"
+  google-analytics: "G-JFE6F80WQX"
   navbar:
     background: primary
     right:
